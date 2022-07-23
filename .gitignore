@@ -1,0 +1,17 @@
+.vscode/
+__pycache__/
+
+##### Files #####
+*.ld
+*.o
+*.z64
+
+##### Directories #####
+asm/
+assets/
+bin/
+build/
+
+##### Splat artifacts #####
+*_auto.txt
+.splat_cache
