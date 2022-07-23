@@ -79,8 +79,7 @@ assetclean:
 split: $(SPLAT_YAML)
 	$(SPLAT) $<
 
-setup:
-	clean split
+setup: clean split
 
 $(BUILD_DIR): $(LD_SCRIPT)
 	$(shell mkdir -p build/baserom $(foreach dir,$(SRC_DIRS) $(ASM_DIRS) $(ASM_DATA_DIRS) $(ASSETS_DIRS),build/$(dir)))
