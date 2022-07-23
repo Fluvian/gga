@@ -1,0 +1,42 @@
+name: Ganbare Goemon - Dero Dero Douchuu Obake Tenkomori (Japan)
+sha1: 2ab71b71665a688d40832e16d897548ece9f0dd4
+options:
+  basename: gga
+  target_path: baserom.z64
+  base_path: .
+  compiler: IDO
+  find_file_boundaries: True
+  platform: n64
+  undefined_funcs_auto_path: undefined_funcs_auto.txt
+  undefined_syms_auto_path: undefined_syms_auto.txt
+  symbol_addrs_path: [symbol_addrs.txt, pif_syms.txt]
+  undefined_syms_path: undefined_syms.txt
+  asm_path: asm/text
+  data_path: asm/data
+  nonmatchings_path: asm/nonmatchings
+  src_path: src
+  build_path: build
+  extensions_path: tools/splat_ext
+segments:
+  - name: header
+    type: header
+    start: 0x0
+  - name: ipl3
+    type: bin
+    start: 0x40
+  - name: entry
+    type: code
+    start: 0x1000
+    vram: 0x80000400
+    subsegments:
+      - [0x1000, asm, entry]
+  - name: boot
+    type: code
+    dir: boot
+    start: 0x1060
+    vram: 0x80000470
+    subsegments:
+    - [0x1060, c]
+  - type: bin
+    start: 0xC5CD0
+  - [0x1000000]
