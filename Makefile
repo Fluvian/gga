@@ -114,7 +114,7 @@ $(BUILD_DIR)/$(TARGET).z64: $(BUILD_DIR)/$(TARGET).bin
 	@cp $< $@
 
 verify: $(BUILD_DIR)/$(TARGET).z64
-	md5sum -c checksum.md5
+	sha1sum -c $(TARGET).sha1
 
 .DEFAULT: all
 .PHONY: all clean default split setup distclean asmclean assetclean
