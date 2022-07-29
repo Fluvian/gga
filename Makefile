@@ -1,6 +1,6 @@
 ##### Directories #####
 BUILD_DIR     := build
-ASSETS_DIRS   := assets
+ASSETS_DIRS   := $(shell find assets -type d)
 ASM_DIRS      := $(shell find asm -path "asm/data" -prune -o -path "asm/nonmatchings" -prune -o -type d -print)
 ASM_DATA_DIRS := $(shell find asm/data -type d)
 SRC_DIRS      := $(shell find src/ -type d)
@@ -20,7 +20,7 @@ O_FILES := $(foreach file,$(C_FILES),$(BUILD_DIR)/$(file:.c=.c.o)) \
            $(foreach file,$(S_FILES),$(BUILD_DIR)/$(file:.s=.s.o)) \
            $(foreach file,$(S_DATA_FILES),$(BUILD_DIR)/$(file:.data.s=.data.s.o)) \
            $(foreach file,$(S_RODATA_FILES),$(BUILD_DIR)/$(file:.rodata.s=.rodata.s.o)) \
-           $(foreach file,$(DATA_FILES),$(BUILD_DIR)/$(file:.bin=.bin.o)) \
+           $(foreach file,$(ASSET_FILES),$(BUILD_DIR)/$(file:.bin=.bin.o)) \
 
 ##### Tools #####
 ifeq ($(shell type mips-n64-ld >/dev/null 2>/dev/null; echo $$?), 0)
@@ -38,8 +38,8 @@ LD      := $(CROSS)ld
 OBJDUMP := $(CROSS)objdump
 OBJCOPY := $(CROSS)objcopy
 
-CC := tools/ido/linux/5.3/cc1
-# CC := tools/ido/linux/7.1/cc1
+CC := tools/ido/linux/5.3/cc
+# CC := tools/ido/linux/7.1/cc
 
 SPLAT := python3 tools/splat/split.py
 
@@ -57,7 +57,7 @@ GCC_CFLAGS := -Wall $(DEFINE_CFLAGS) $(INCLUDE_CFLAGS) -fno-PIC -fno-zero-initia
 CC_CHECK := gcc -fsyntax-only -fno-builtin -nostdinc -fsigned-char -m32 $(GCC_CFLAGS) -std=gnu90 -Wall -Wextra -Wno-format-security -Wno-main -DNON_MATCHING -DAVOID_UB
 
 ##### Targets #####
-build/src/%.o: CC := python3 tools/asm_processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
+build/src/%.o: CC := python3 tools/asm-processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
 build/asm/%.o: ASFLAGS += -mips3 -mabi=32
 
 default: all

@@ -1,0 +1,3 @@
+inflateEnd = 0x8001EDC0;
+inflateInit = 0x8001EFA0;
+inflate = 0x8001EFCC;
