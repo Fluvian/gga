@@ -1,5 +1,7 @@
 # Goemon's Great Adventure Decompilation
 
+![Goemon's Great Adventure Decompilation](docs/images/banner.png)
+
 This is a *work-in-progress* decompilation of Goemon's Great Adventure.
 
 ## Usage
