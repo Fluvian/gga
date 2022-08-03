@@ -34,7 +34,7 @@ segments:
     type: code
     dir: boot
     start: 0x1060
-    vram: 0x80000470
+    vram: 0x80000460
     subsegments:
     - [0x1060, c, scheduler]
     - [0x19E0, c, main]
@@ -46,11 +46,11 @@ segments:
     - [0x5260, c, init_game]
     - [0x54D0, c, events]
     - [0x58F0, c, pic]
-    - [0x7280, c] # ?
+    - [0x7280, c] # Something to do with allocating heaps.
     - [0x7DD0, c, audio/external]
     - [0xB6A0, c, audio/player]
     - [0xCF20, c, audio/sequence]
-    - [0xEFF0, c, ../libultra/os/sendmesg] # start of libultra
+    - [0xEFF0, c, ../libultra/os/sendmesg] # Start of libultra.
     - [0xF140, c, ../libultra/os/recvmesg]
     - [0xF280, asm, ../libultra/os/setintmask]
     - [0xF320, c, ../libultra/audio/sl]
@@ -197,7 +197,7 @@ segments:
     - [0x1F7F0, c, ../libultra/io/aisetnextbuf]
     - [0x1F8A0, c, ../libultra/io/ai]
     - [0x1F8D0, c] # ?
-    - [0x1F910, c, ../libultra/io/spsetpc] # end of libultra
+    - [0x1F910, c, ../libultra/io/spsetpc] # End of libultra.
     - [0x1F950, c, ../zlib/inflate]
     - [0x203F0, c, ../zlib/infblock]
     - [0x215A0, c, ../zlib/infutil]
