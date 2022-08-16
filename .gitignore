@@ -1,6 +1,3 @@
-.vscode/
-__pycache__/
-
 ##### Files #####
 *.ld
 *.o
@@ -12,6 +9,9 @@ assets/
 bin/
 build/
 
-##### Splat artifacts #####
+##### Artifacts #####
 *_auto.txt
+ctx.c
+.vscode/
+__pycache__/
 .splat_cache
