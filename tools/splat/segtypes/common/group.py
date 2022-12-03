@@ -1,8 +1,9 @@
 from typing import List, Optional
-from segtypes.common.linker_section import dotless_type
+
+from util import log
+
 from segtypes.common.segment import CommonSegment
 from segtypes.segment import RomAddr, Segment
-from util import log
 
 
 class CommonSegGroup(CommonSegment):
@@ -13,12 +14,6 @@ class CommonSegGroup(CommonSegment):
         type,
         name,
         vram_start,
-        extract,
-        given_subalign,
-        exclusive_ram_id,
-        given_dir,
-        symbol_name_format,
-        symbol_name_format_no_rom,
         args,
         yaml,
     ):
@@ -28,12 +23,6 @@ class CommonSegGroup(CommonSegment):
             type,
             name,
             vram_start,
-            extract,
-            given_subalign,
-            exclusive_ram_id=exclusive_ram_id,
-            given_dir=given_dir,
-            symbol_name_format=symbol_name_format,
-            symbol_name_format_no_rom=symbol_name_format_no_rom,
             args=args,
             yaml=yaml,
         )
@@ -56,7 +45,7 @@ class CommonSegGroup(CommonSegment):
         prev_start: RomAddr = -1
 
         for i, subsection_yaml in enumerate(yaml["subsegments"]):
-            # End of previous segment
+            # endpos marker
             if isinstance(subsection_yaml, list) and len(subsection_yaml) == 1:
                 continue
 
@@ -85,6 +74,8 @@ class CommonSegGroup(CommonSegment):
                 segment_class, subsection_yaml, start, end, vram
             )
             segment.parent = self
+            if segment.special_vram_segment:
+                self.special_vram_segment = True
 
             ret.append(segment)
             prev_start = start
@@ -128,5 +119,19 @@ class CommonSegGroup(CommonSegment):
     def get_subsegment_for_ram(self, addr) -> Optional[Segment]:
         for sub in self.subsegments:
             if sub.contains_vram(addr):
+                return sub
+        return None
+
+    def get_next_subsegment_for_ram(self, addr: int) -> Optional[Segment]:
+        """
+        Returns the first subsegment which comes after the specified address,
+        or None in case this address belongs to the last subsegment of this group
+        """
+
+        for sub in self.subsegments:
+            if sub.vram_start == "auto":
+                continue
+            assert isinstance(sub.vram_start, int)
+            if sub.vram_start > addr:
                 return sub
         return None

@@ -1,12 +1,12 @@
-from segtypes.n64.segment import N64Segment
+from util import log, options
 from util.n64 import Yay0decompress
-from util import options
-from util import log
+
+from segtypes.n64.segment import N64Segment
 
 
 class N64SegYay0(N64Segment):
     def split(self, rom_bytes):
-        out_dir = options.get_asset_path() / self.dir
+        out_dir = options.opts.asset_path / self.dir
         out_dir.mkdir(parents=True, exist_ok=True)
 
         if self.rom_end == "auto":
@@ -16,7 +16,10 @@ class N64SegYay0(N64Segment):
 
         out_path = out_dir / f"{self.name}.bin"
         with open(out_path, "wb") as f:
-            self.log(f"Decompressing {self.name}...")
+            assert isinstance(self.rom_start, int)
+            assert isinstance(self.rom_end, int)
+
+            self.log(f"Decompressing {self.name}")
             compressed_bytes = rom_bytes[self.rom_start : self.rom_end]
             decompressed_bytes = Yay0decompress.decompress_yay0(compressed_bytes)
             f.write(decompressed_bytes)
@@ -28,8 +31,8 @@ class N64SegYay0(N64Segment):
         return [
             LinkerEntry(
                 self,
-                [options.get_asset_path() / self.dir / f"{self.name}.bin"],
-                options.get_asset_path() / self.dir / f"{self.name}.Yay0",
+                [options.opts.asset_path / self.dir / f"{self.name}.bin"],
+                options.opts.asset_path / self.dir / f"{self.name}.Yay0",
                 self.get_linker_section(),
             )
         ]

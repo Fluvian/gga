@@ -1,5 +1,108 @@
 # splat Release Notes
 
+### 0.12.7
+
+* Allow setting a different macro for jumptable labels with `asm_jtbl_label_macro`
+  * The currently recommended one is `jlabel` instead of `glabel`
+* Two new options for symbols: `force_migration` and `force_not_migration`
+  * Useful for weird cases where the disassembler decided a rodata symbol must (or must not) be migrated when it really shouldn't (or should)
+* Fix `str_encoding` defaulting to `False` instead of `None`
+* Output empty rules in generated dependency files to avoid issues when the function file does not exist anymore (i.e. when it gets matched)
+* Allow changing the `include_macro_inc` option in the yaml
+
+### 0.12.6
+
+* Adds two new N64-specific segments:
+  * IPL3: Allows setting its correct VRAM address without messing the global segment detection
+  * RSP: Allows disassembling using the RSP instruction set instead of the default one
+* PS2 was added as a new platform option.
+  * When this is selected the R5900 instruction set will be used when disassembling instead of the default one.
+
+### 0.12.5
+
+* Update minimal spimdisasm version to 1.7.1.
+* Fix spimdisasm>=1.7.0 non being able to see symbols which only are referenced by other data symbols.
+* An check was added to prevent segments marked with `exclusive_ram_id` have a vram address range which overlaps with segments not marked with said tag. If this happens it will be warned to the user.
+
+### 0.12.4
+
+* Fixed a bug involving the order of attributes in symbol_addrs preventing proper range searching during calls to `get_symbol`
+
+### 0.12.3: Initial Gamecube Support
+Initial support for Gamecube disk images has been set up! Disassembly is not currently supported, and a more comprehensive explanation of Gamecube support will come once that is finished.
+
+* The Symbol class is now hashable
+* Added the ability for segments to specify a file path (`path`) to receive that file's contents as their split input
+* The `generated_s_preamble` option now will be applied to data files created by spimdisasm
+* Rewrote symbol range check code to be more efficient
+* Fixed bug that allowed empty top-level segments of type `code`.
+* Fixed progress bars to properly update their descriptions
+* Fixed bug pertaining to symbols getting assigned to segments they shouldn't if their segment is given in symbol_addrs (`segment:`)
+
+### 0.12.2
+* Fixed bug where `given_dir` was possibly not a `Path`
+
+### 0.12.1
+* The constructor for `Segment` takes far fewer arguments now, which will affect (and hopefully simplify) any custom segments that are implemented.
+
+* The new option `string_encoding` can be set at the global or segment level and will influence the encoding for strings in rodata during disassembly. The default encoding used is EUC-JP, as it was previously.
+
+## 0.12.0: Performance Boost
+
+In this release, we bring many performance improvements, making splat dramatically faster. We have observed speedups of 10-20x, though your results may vary.
+
+* Linker script `_romPos` alignment statements now take a form that is friendlier to different assemblers.
+
+* Fixed the default value of `use_legacy_include_asm` to be what it was before 0.11.2
+
+### 0.11.2
+* The way options are parsed and accessed has been completely refactored. The following option names have changed:
+
+`linker_symbol_header_path` -> `ld_symbol_header_path`
+
+`asm_endlabels` -> `asm_end_label`
+
+Additionally, any custom segments or code that needs to read options will have to accommodate the new API for doing so. Options are now fields of an object named `opts` within the existing `options` namespace. Because the options are fields, `get_` is no longer necessary. To give an example:
+
+Before: `options.get_asm_path()`
+
+After: `options.opts.asm_path`
+
+The clean_up_path function in linker_entry.py now uses a cache, offering a small performance improvement during the linker script writing phase.
+
+### 0.11.1
+* The linker script now includes a `_SIZE` symbol for each segment.
+* The new `create_asm_dependencies`, if enabled, will cause splat to create `.asmproc.d` files that can inform a build system which asm files a c file depends upon. If your build system is configured correctly, this can allow triggering a rebuild of a C file when its included asm files are modified.
+* Splat no longer depends directly on pypng and now instead uses [n64img](https://github.com/decompals/n64img). Currently, all image behavior uses the exact same code. Eventually, n64img will be implemented in C and support rebuilding images as well.
+
+## 0.11.0: Spimdisasm Returns
+
+Spimdisasm now handles data (data, rodata, bss) disassembly in splat! This includes a few changes in behavior:
+
+* Rodata will be migrated to c files' asm function files when a .rodata subsegment is used that corresponds with an identically-named c file. Some symbols may not be automatically migrated to functions when it is not clear if they belong to the function itself (an example of which being const arrays). In this case, the `partial_migration` option can be enabled for the given .rodata subsegment and splat will create .s files for these unmigrated rodata symbols. These files can then be included in your c files, or you can go ahead and migrate these symbols to c and disable the `partial_migration` feature.
+
+* BSS can now be disassembled as well, and the size of a code segment's bss section can be specified with the `bss_size` option. This option will tell splat how large the bss section is in bytes so BSS can properly be handled during disassembly. For bss subsegments, the rom address will of course not change, but the vram address should still be specified. This currently can only be done in the dict form of segment representation, rather than the list form.
+
+Thanks again to [AngheloAlf](https://github.com/AngheloAlf) for adding this functionality and continuing to improve splat's disassembler.
+
+## 0.10.0: The Linker Script Update
+
+Linker scripts splat produces are now capable of being shift-friendly. Rom addresses will automatically shift, and ram addresses will still be hard-coded unless the new segment option `follows_vram` is specified. The value of this option should be the name of a segment (a) that this segment (b) should follow in memory. If a grows or shrinks, b's start address will also do so to accommodate it.
+
+The `enable_ld_alignment_hack` option and corresponding behavior has been removed. This proved to add too much complexity to the linker script generation code and was becoming quite a burden to keep dealing with. Apologies for any inconvenience this may cause. But trust me: in the long run, it's good you won't be depending on that madness.
+
+### 0.9.5
+* Changes have been made to the linker script such that it is more shiftable. Rather than setting the rom position to hard-coded addresses, it increments the position by the size of the previous segment. Some projects may experience some alignment-related issues after this change. If specified, the new segment option `align: n` will add an `ALIGN(n)` directive for that section's linker segment.
+
+### 0.9.4
+* A new linker script section is now automatically created when the .bss section begins, using NOLOAD as opposed to the previous hacky rom rewinding we were previously doing. Additionally, `ld_section_labels` now includes `.rodata` by default.
+
+### 0.9.3
+* Added `add_set_gp_64` option (true by default), which allows controlling whether to add ".set gp=64" to asm/hasm files
+
+### 0.9.2
+* Added "palette" argument to ci4/ci8 segments so that segments' palettes can be manually specified
+
 ### 0.9.1
 * Fixed a bug in which local labels and jump table labels could replace raw words in data blobs during data disassembly
 
@@ -22,11 +125,11 @@ We plan to roll this out in phases. Currently, it only handles actual code disas
 
 ### Global options changes
 
-The new `symbol_name_format` option allows specification of how symbols will be named. This can be set as a global option and also changed per-segment. `symbol_norom_name_format` is used when the symbol does not have a rom address (BSS).
+The new `symbol_name_format` option allows specification of how symbols will be named. This can be set as a global option and also changed per-segment. `symbol_name_format_no_rom` is used when the symbol does not have a rom address (BSS).
 
  The following substitutions are allowed:
 
-`$ROM` - the rom address of the symbol, hex-formatted and padded to 6 characters (ABCF10, 000030, 123456) (note: only for `symbol_name_format`, usage in `symbol_norom_name_format` will cause an error)
+`$ROM` - the rom address of the symbol, hex-formatted and padded to 6 characters (ABCF10, 000030, 123456) (note: only for `symbol_name_format`, usage in `symbol_name_format_no_rom` will cause an error)
 
 `$VRAM` - the vram address of the symbol, hex-formatted and padded to 8 characters (00030010, 00020015, ABCDEF10)
 
@@ -34,14 +137,14 @@ The new `symbol_name_format` option allows specification of how symbols will be 
 
 The default values for these options are as follows
 
-`symbol_name_format` : `$VRAM_$ROM`
+`symbol_name_format` : `$VRAM`
 
-`symbol_noram_name_format` : `$VRAM_$SEG`
+`symbol_name_format_no_rom` : `$VRAM_$SEG`
 
 The appropriate prefix string will still automatically be applied depending on the type of the symbol: `D_` for data, `jtbl_` for jump tables, and `func_` for functions. This functionality may be customizable in the future.
 
 ----
-The `auto_all_section` option now should be a list of section names (`[".data", ".rodata", ".bss"]` by default) indicating the sections that should be linked from .o files built from source files (.c or asm/hasm .s files), when no subsegment explicitly indicates linking this type of section.
+The `auto_all_sections` option now should be a list of section names (`[".data", ".rodata", ".bss"]` by default) indicating the sections that should be linked from .o files built from source files (.c or asm/hasm .s files), when no subsegment explicitly indicates linking this type of section.
 
 For example, if any subsegment of a code segment is of segment type `data` or `.data`, the `.data` section from all `c`/`asm`/`hasm` subsegments will not be linked unless explicitly indicated with a relevant `.data` subsegment.
 
