@@ -9,27 +9,30 @@ options:
   platform: n64
   undefined_funcs_auto_path: undefined_funcs_auto.txt
   undefined_syms_auto_path: undefined_syms_auto.txt
-  symbol_addrs_path: [symbol_addrs.txt, pif_syms.txt]
+  symbol_addrs_path: symbol_addrs.txt
   undefined_syms_path: undefined_syms.txt
   asm_path: asm/text
   data_path: asm/data
   nonmatchings_path: asm/nonmatchings
   src_path: src
   build_path: build
-  extensions_path: tools/splat_ext
+  
 segments:
   - name: header
     type: header
     start: 0x0
+
   - name: ipl3
     type: bin
     start: 0x40
+
   - name: entry
     type: code
     start: 0x1000
     vram: 0x80000400
     subsegments:
       - [0x1000, asm, entry]
+    
   - name: boot
     type: code
     dir: boot
@@ -40,17 +43,17 @@ segments:
     - [0x19E0, c, main]
     - [0x2410, c, init]
     - [0x2950, c, controller]
-    - [0x2FB0, c, decompress]
-    - [0x3870, c, memory]
-    - [0x4950, c, init_gfx]
-    - [0x5260, c, init_game]
-    - [0x54D0, c, events]
-    - [0x58F0, c, pic]
-    - [0x7280, c] # Something to do with allocating heaps.
+    - [0x2FB0, c, memory/decompress]
+    - [0x3870, c, memory/load]
+    - [0x4950, c, memory/init]
+    - [0x54D0, c, memory/util]
+    - [0x58F0, c, memory/pic]
+    - [0x7280, c, memory/buffers]
     - [0x7DD0, c, audio/external]
     - [0xB6A0, c, audio/player]
     - [0xCF20, c, audio/sequence]
-    - [0xEFF0, c, ../libultra/os/sendmesg] # Start of libultra.
+
+    - [0xEFF0, c, ../libultra/os/sendmesg]
     - [0xF140, c, ../libultra/os/recvmesg]
     - [0xF280, asm, ../libultra/os/setintmask]
     - [0xF320, c, ../libultra/audio/sl]
@@ -64,14 +67,14 @@ segments:
     - [0x10590, c, ../libultra/os/thread]
     - [0x105D0, c, ../libultra/os/destroythread]
     - [0x106E0, asm, ../libultra/libc/bzero]
-    - [0x10780, asm] # libleo?
+    - [0x10780, c, ../libultra/io/leointerrupt]
     - [0x10E70, c, ../libultra/io/motor]
     - [0x11240, c, ../libultra/io/siacs]
     - [0x11300, c, ../libultra/os/createthread]
     - [0x11450, c, ../libultra/io/contreaddata]
     - [0x11630, c, ../libultra/io/controller]
     - [0x11970, c, ../libultra/gu/align]
-    - [0x11B80, c, ../libultra/audio/bnkf] # This file has been modified.
+    - [0x11B80, c, ../libultra/audio/bnkf] # This file seems to have been modified.
     - [0x11DD0, c, ../libultra/audio/synallocvoice]
     - [0x12000, c, ../libultra/os/virtualtophysical]
     - [0x12080, asm, ../libultra/os/writebackdcache]
@@ -81,7 +84,7 @@ segments:
     - [0x12710, asm, ../libultra/os/setsr]
     - [0x12720, asm, ../libultra/os/getsr]
     - [0x12730, c, ../libultra/audio/synsetfxparam]
-    - [0x12740, c, ../libultra/io/vigetcurrframebuf]
+    - [0x12740, c, ../libultra/io/vigetnextframebuf]
     - [0x127B0, c, ../libultra/audio/synstartvoice]
     - [0x12840, c, ../libultra/gu/perspective]
     - [0x12AD0, c, ../libultra/io/sprawdma]
@@ -122,7 +125,7 @@ segments:
     - [0x192C0, asm, ../libultra/os/unmaptlball]
     - [0x19310, c, ../libultra/io/epidma]
     - [0x193F0, c, ../libultra/audio/heapinit]
-    - [0x19430, c] # osLeoDiskInit
+    - [0x19430, c, ../libultra/io/leodiskinit]
     - [0x194D0, c, ../libultra/libc/string]
     - [0x19570, c, ../libultra/os/createmesgqueue]
     - [0x195A0, asm, ../libultra/os/invalicache]
@@ -162,7 +165,7 @@ segments:
     - [0x1B660, c, ../libultra/io/cartrominit]
     - [0x1B760, c, ../libultra/io/pfsselectbank]
     - [0x1B7E0, asm, ../libultra/os/setfpccsr]
-    - [0x1B7F0, c, ../libultra/io/pfsinitpak] # ?
+    - [0x1B7F0, c, ../libultra/io/pfsinitpak]
     - [0x1B9E0, c, ../libultra/io/pfsgetstatus]
     - [0x1BC10, c, ../libultra/io/contpfs]
     - [0x1C790, c, ../libultra/io/pfschecker]
@@ -196,8 +199,9 @@ segments:
     - [0x1F7E0, c, ../libultra/io/syndelete]
     - [0x1F7F0, c, ../libultra/io/aisetnextbuf]
     - [0x1F8A0, c, ../libultra/io/ai]
-    - [0x1F8D0, c] # ?
-    - [0x1F910, c, ../libultra/io/spsetpc] # End of libultra.
+    - [0x1F8D0, c, ../libultra/io/vigetcurrframebuf]
+    - [0x1F910, c, ../libultra/io/spsetpc] 
+
     - [0x1F950, c, ../zlib/inflate]
     - [0x203F0, c, ../zlib/infblock]
     - [0x215A0, c, ../zlib/infutil]
@@ -206,11 +210,14 @@ segments:
     - [0x21990, c, ../zlib/inftrees]
     - [0x22390, c, ../zlib/infcodes]
     - [0x22E30, c, ../zlib/inffast]
+
     - [0x23350, bin, rsp_boot.text]
-    - [0x23420, bin, rsp.text]
+    - [0x23420, bin, f3dex2.text]
     - [0x255D0, data]
     - [0x3BB50, rodata]
     # - [0x3D6E0, .bss] # length = 0x885F0
+    
   - type: bin
     start: 0x3D6E0
+  
   - [0x1000000]
