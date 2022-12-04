@@ -210,11 +210,9 @@ segments:
     - [0x23420, rsp, rsp/f3dex2]
     - [0x247B0, rsp, rsp/aspMain]
     - [0x255D0, data]
-    
+
     - [0x3BB50, rodata]
-
-    - [0x255D0, bin]
-
+    
     # - [0x3D6E0, .bss] # length = 0x885F0
     
   - type: bin
