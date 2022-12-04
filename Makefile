@@ -3,7 +3,7 @@ BUILD_DIR     := build
 ASSETS_DIRS   := $(shell find assets -type d)
 ASM_DIRS      := $(shell find asm -path "asm/data" -prune -o -path "asm/nonmatchings" -prune -o -type d -print)
 ASM_DATA_DIRS := $(shell find asm/data -type d)
-SRC_DIRS      := $(shell find src/ -type d)
+SRC_DIRS      := $(shell find src -type d)
 
 ##### Files #####
 TARGET     := gga
@@ -64,17 +64,8 @@ default: all
 
 all: $(BUILD_DIR) $(BUILD_DIR)/$(TARGET).z64 verify
 
-distclean: asmclean assetclean clean
-
 clean:
 	rm -rf $(BUILD_DIR)
-
-asmclean:
-	rm -rf asm
-	rm -f $(LD_SCRIPT)
-
-assetclean:
-	rm -rf assets
 
 split: $(SPLAT_YAML)
 	$(SPLAT) $<
@@ -116,4 +107,4 @@ verify: $(BUILD_DIR)/$(TARGET).z64
 	sha1sum -c $(TARGET).sha1
 
 .DEFAULT: all
-.PHONY: all clean default split setup distclean asmclean assetclean
+.PHONY: all default clean split setup

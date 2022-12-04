@@ -2,20 +2,15 @@ name: Ganbare Goemon - Dero Dero Douchuu Obake Tenkomori (Japan)
 sha1: 2ab71b71665a688d40832e16d897548ece9f0dd4
 options:
   basename: gga
-  target_path: baserom.z64
+
   base_path: .
-  compiler: IDO
-  find_file_boundaries: True
+  target_path: baserom.z64
   platform: n64
-  undefined_funcs_auto_path: undefined_funcs_auto.txt
-  undefined_syms_auto_path: undefined_syms_auto.txt
-  symbol_addrs_path: symbol_addrs.txt
-  undefined_syms_path: undefined_syms.txt
-  asm_path: asm/text
-  data_path: asm/data
-  nonmatchings_path: asm/nonmatchings
-  src_path: src
-  build_path: build
+  compiler: IDO
+
+  gfx_ucode: f3dex2
+  
+  find_file_boundaries: True
   
 segments:
   - name: header
@@ -211,10 +206,15 @@ segments:
     - [0x22390, c, ../zlib/infcodes]
     - [0x22E30, c, ../zlib/inffast]
 
-    - [0x23350, bin, rsp_boot.text]
-    - [0x23420, bin, f3dex2.text]
+    - [0x23350, rsp, rsp/rspboot]
+    - [0x23420, rsp, rsp/f3dex2]
+    - [0x247B0, rsp, rsp/aspMain]
     - [0x255D0, data]
+    
     - [0x3BB50, rodata]
+
+    - [0x255D0, bin]
+
     # - [0x3D6E0, .bss] # length = 0x885F0
     
   - type: bin
