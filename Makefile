@@ -41,6 +41,7 @@ OBJCOPY := $(CROSS)objcopy
 CC := tools/ido/linux/5.3/cc
 # CC := tools/ido/linux/7.1/cc
 
+ICONV := iconv
 SPLAT := python3 tools/splat/split.py
 
 ##### Options #####
@@ -67,6 +68,15 @@ all: $(BUILD_DIR) $(BUILD_DIR)/$(TARGET).z64 verify
 clean:
 	rm -rf $(BUILD_DIR)
 
+purge:
+	rm -rf $(BUILD_DIR)
+	rm -rf asm
+	rm -rf assets
+
+	rm -f $(LD_SCRIPT)
+	rm -f undefined_syms_auto.txt
+	rm -f undefined_funcs_auto.txt
+
 split: $(SPLAT_YAML)
 	$(SPLAT) $<
 
@@ -81,7 +91,7 @@ $(BUILD_DIR)/%.c.o: %.c
 	$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
 
 $(BUILD_DIR)/%.s.o: %.s
-	$(AS) $(ASFLAGS) -o $@ $<
+	$(ICONV) --to-code=EUC-JP $< | $(AS) $(ASFLAGS) -o $@
 
 $(BUILD_DIR)/%.bin.o: %.bin
 	$(LD) -r -b binary -o $@ $<
