@@ -12,6 +12,7 @@ options:
   
   find_file_boundaries: True
   migrate_rodata_to_functions: False
+
   add_set_gp_64: True
   
 segments:
@@ -248,7 +249,43 @@ segments:
     - [0x3A9B0, data, ../zlib/zutil]
     - [0x3A9E0, data, ../zlib/inftrees]
 
-    - [0x3BAF0, rodata]
+    - [0x3BAF0, rodata, main]
+    - [0x3BB50, rodata, controller]
+    - [0x3BBA0, rodata, memory/decompress]
+    - [0x3BCD0, rodata, memory/load]
+    - [0x3C050, rodata, memory/util]
+    - [0x3C0F0, rodata, memory/pic]
+    - [0x3C220, rodata, memory/buffers]
+    - [0x3C5A0, rodata, audio/external]
+
+    - [0x3C5C0, rodata, ../libultra/os/setintmask]
+    - [0x3C640, rodata, ../libultra/gu/rotate]
+    - [0x3C650, rodata, ../libultra/gu/sinf]
+    - [0x3C6A0, rodata, ../libultra/os/exceptasm]
+    - [0x3C6F0, rodata, ../libultra/gu/align]
+    - [0x3C700, rodata, ../libultra/gu/perspective]
+    - [0x3C710, rodata, ../libultra/audio/synthesizer]
+    - [0x3C720, rodata, ../libultra/audio/drvrNew]
+    - [0x3C740, rodata, ../libultra/audio/reverb]
+    - [0x3C770, rodata, ../libultra/audio/env]
+    - [0x3C7D0, rodata, ../libultra/audio/resample]
+    - [0x3C810, rodata, ../libultra/io/devmgr]
+    - [0x3C830, rodata, ../libultra/gu/lookathil]
+    - [0x3C840, rodata, ../libultra/libc/xprintf]
+    - [0x3C940, rodata, ../libultra/gu/position]
+    - [0x3C950, rodata, ../libultra/gu/cosf]
+    - [0x3C9A0, rodata, ../libultra/gu/libm_vals]
+    - [0x3C9B0, rodata, ../libultra/libc/xldtob]
+
+    - [0x3CA10, rodata, ../zlib/inflate]
+    - [0x3CAD0, rodata, ../zlib/infblock]
+    - [0x3CBC0, rodata, ../zlib/zutil]
+    - [0x3CC50, rodata, ../zlib/inftrees]
+    - [0x3CF60, rodata, ../zlib/infcodes]
+    - [0x3CFC0, rodata, ../zlib/inffast]
+
+    - [0x3D000, rodata, rsp/f3dex2]
+    - [0x3D420, rodata, rsp/aspMain]
     
     # - [0x3D6E0, .bss] # length = 0x885F0
     
