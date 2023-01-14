@@ -207,9 +207,9 @@ segments:
     - [0x22390, c, ../zlib/infcodes]
     - [0x22E30, c, ../zlib/inffast]
 
-    - [0x23350, rsp, rsp/rspboot]
-    - [0x23420, rsp, rsp/f3dex2]
-    - [0x247B0, rsp, rsp/aspMain]
+    - [0x23350, data, rsp/rspboot]
+    - [0x23420, data, rsp/f3dex2]
+    - [0x247B0, data, rsp/aspMain]
 
     - [0x255D0, data, main]
     - [0x255F0, data, memory/load]

@@ -48,7 +48,7 @@ SPLAT := python3 tools/splat/split.py
 OPTFLAGS := -O2
 
 DEFINE_CFLAGS  := -D_LANGUAGE_C -D_FINALROM -DF3DEX_GBI_2 -D_MIPS_SZLONG=32
-INCLUDE_CFLAGS := -I . -I include -I include/libultra
+INCLUDE_CFLAGS := -I . -I include -I include/libultra -I include/libultra/PR
 CFLAGS         := -G0 -mips2 -non_shared -fullwarn -verbose -Xcpluscomm -Wab,-r4300_mul $(DEFINE_FLAGS) $(INCLUDE_CFLAGS)
 ASFLAGS        := -EB -mtune=vr4300 -march=vr4300 -I include
 
