@@ -3,6 +3,7 @@ main = 0x80000DE0;
 inflateEnd = 0x8001EDC0;
 inflateInit = 0x8001EFA0;
 inflate = 0x8001EFCC;
+inflate_flush = 0x800209A0;
 
 osSendMesg = 0x8000E3F0;
 osRecvMesg = 0x8000E540;
